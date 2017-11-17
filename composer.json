@@ -1,0 +1,13 @@
+{
+    "name": "tigerb/naruto",
+    "description": "An object-oriented multi process manager for PHP",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "TIGERB",
+            "email": "tigerbcode@gmail.com"
+        }
+    ],
+    "require": {}
+}
