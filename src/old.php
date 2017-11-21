@@ -27,6 +27,8 @@ class Manager
 
 	private $workerAcceptedSignal = '';
 
+	// public $test = 'lalala';
+
 	public function __construct($forkNum = 1, $passwd = '')
 	{
 		$this->forkNum 	  = $forkNum;
@@ -125,7 +127,9 @@ class Manager
 				return;
 			}
 			
-			$res = fwrite($pipe, $this->workerSignal);
+			// $a = &$this->test;
+			// var_dump(serialize($a));
+			$res = fwrite($pipe, $a);
 			if (! $res) {
 				// exception
 				return;
@@ -230,7 +234,12 @@ class Manager
 
 					/* accept signal from master process */
 					$signal = fread($workerPipe, 1024);
+					
 					if (! empty($signal)) {
+						// $a = unserialize($signal);
+						// $a = '1111';
+						// var_dump();
+						continue;
 						error_log($signal . PHP_EOL, 3, '/tmp/debug.log');
 						$signal = explode('|', $signal);
 						if (count($signal) !== 2) {
@@ -313,6 +322,8 @@ class Manager
 		while (true) {
 			// dispatch signal handler
 			pcntl_signal_dispatch();
+
+			var_dump($this->test . ' master');
 
 			// wait worker process
 			foreach ($this->workerPids as $k => $v) {
