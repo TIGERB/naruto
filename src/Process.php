@@ -6,9 +6,9 @@ use Naruto\ProcessException;
 abstract class Process
 {
 	protected $type = '';
-	protected $pid = '';
+	public	  $pid = '';
 	protected $pipeName = '';
-	protected $pipeMode = '0777';
+	protected $pipeMode = 0777;
 	protected $pipeNamePrefix = 'naruto.pipe';
 	protected $pipeDir = '/tmp/';
 	protected $pipePath = '';
@@ -18,7 +18,9 @@ abstract class Process
 
 	public function __construct()
 	{
-		$this->pid = posix_getpid();
+		if (empty($this->pid)) {
+			$this->pid = posix_getpid();
+		}
 		$this->pipeName = $this->pipeNamePrefix . $this->pid;
 		$this->pipePath = $this->pipeDir . $this->pipeName;
 	}
@@ -37,7 +39,7 @@ abstract class Process
 		}
 	}
 
-	protected function pipeWrite($signal = '')
+	public function pipeWrite($signal = '')
 	{
 		$pipe = fopen($this->pipePath, 'w');
 		if (! $pipe) {
@@ -49,11 +51,11 @@ abstract class Process
 		
 		$res = fwrite($pipe, $signal);
 		if (! $res) {
-			ProcessException::error("{$this->type} | {$this->pid} | pipe | write | {$signal} | {$this->pipePath}");
+			ProcessException::error("{$this->type} | {$this->pid} | pipe | write | {$this->pipePath} | {$signal}");
 			return;
 		}
 
-		ProcessException::info("{$this->type} | {$this->pid} | pipe | write | {$signal} | {$this->pipePath}");
+		ProcessException::info("{$this->type} | {$this->pid} | pipe | write | {$this->pipePath} | {$signal}");
 
 		if (! fclose($pipe)) {
 			ProcessException::error("{$this->type} | {$this->pid} | pipe | close | {$this->pipePath}");
@@ -63,7 +65,7 @@ abstract class Process
 		ProcessException::info("{$this->type} | {$this->pid} | pipe | close | {$this->pipePath}");
 	}
 
-	protected function pipeRead()
+	public function pipeRead()
 	{
 		// check pipe
 		while (! file_exists($this->pipePath)) {
@@ -78,7 +80,7 @@ abstract class Process
 
 		// read pipe
 		if ($msg = fread($workerPipe, $this->readPipeType)) {
-			ProcessException::info("{$this->type} | {$this->pid} | pipe | read | {$msg} | {$this->pipePath}");
+			ProcessException::info("{$this->type} | {$this->pid} | pipe | read | {$this->pipePath} | {$msg}");
 		}
 		return $msg;
 	}

@@ -43,15 +43,17 @@ class Manager
 		$this->registerSigHandler();
 
 		// hangup master
-		$this->master->hangup();
+		$this->hangup();
 	}
 
-	public function defineSigHandler($signo = 0)
+	public function defineSigHandler($signal = 0)
 	{
-		switch ($signo) {
+		switch ($signal) {
 			// reload signal
 			case SIGUSR1:
-				$this->master->pipeWrite('reload');
+				foreach ($this->workers as $v) {
+					$v->pipeWrite('reload');
+				}
 			break;
 
 			default:
@@ -62,12 +64,15 @@ class Manager
 
 	private function registerSigHandler()
 	{
+		pcntl_signal(SIGUSR1, ['Naruto\Manager', 'defineSigHandler']);
+		return;
+
 		if (empty($this->signalSupport)) {
 			// exception
 
 		}
 		foreach ($this->signalSupport as $v) {
-			pcntl_signal($v, ['Naruto\Manager', 'defineSigHandler']);
+			pcntl_signal(SIGUSR1, ['Naruto\Manager', 'defineSigHandler']);
 		}
 	}
 
@@ -92,7 +97,7 @@ class Manager
 				break;
 	
 			default:
-				$worker = new Worker("master | $pid | worker instance create", $pid);
+				$worker = new Worker("master | $pid | worker instance create", $pid, 'master');
 				$this->workers[] = $worker;
 				break;
 		}
@@ -102,6 +107,29 @@ class Manager
 	{
 		foreach (range(1, $this->startNum) as $v) {
 			$this->fork();
+		}
+	}
+
+	private function hangup()
+	{
+		while (true) {
+			// dispatch signal for the handlers
+			pcntl_signal_dispatch();
+
+			// prevent the child process become a zombie process
+			// pcntl_wait($status);
+			foreach ($this->workers as $k => $v) {
+				$res = pcntl_waitpid($v->pid, $status, WNOHANG);
+				if ($res == -1 || $res > 0) {
+					unset($this->workers[$k]);
+				}
+			}
+
+			// read signal from worker
+			// $this->master->pipeRead();
+
+			// precent cpu usage rate reach 100%
+			sleep(self::LOOP_SLEEP_TIME);
 		}
 	}
 }

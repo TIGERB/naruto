@@ -129,7 +129,7 @@ class Manager
 			
 			// $a = &$this->test;
 			// var_dump(serialize($a));
-			$res = fwrite($pipe, $a);
+			$res = fwrite($pipe, 'reload');
 			if (! $res) {
 				// exception
 				return;
@@ -323,7 +323,7 @@ class Manager
 			// dispatch signal handler
 			pcntl_signal_dispatch();
 
-			var_dump($this->test . ' master');
+			// var_dump($this->test . ' master');
 
 			// wait worker process
 			foreach ($this->workerPids as $k => $v) {
@@ -337,3 +337,6 @@ class Manager
 		}
 	}
 }
+
+$instance = new Manager(1, 'dvd');
+$instance->execFork();
