@@ -31,11 +31,21 @@ abstract class Process
 	{
 		if (! file_exists($this->pipePath)) {
 			if (! posix_mkfifo($this->pipePath, $this->pipeMode)) {
-				ProcessException::error("{$this->type} | {$this->pid} | pipe | make | {$this->pipePath}");
+				ProcessException::error([
+					'msg' => [
+						'from'  => $this->type,
+						'extra' => "pipe make {$this->pipePath}"
+					]
+				]);
 				exit;
 			}
 			chmod($this->pipePath, $this->pipeMode);
-			ProcessException::info("{$this->type} | {$this->pid} | pipe | make | {$this->pipePath}");
+			ProcessException::info([
+				'msg' => [
+					'from'  => $this->type,
+					'extra' => "pipe make {$this->pipePath}"
+				]
+			]);
 		}
 	}
 
@@ -43,26 +53,56 @@ abstract class Process
 	{
 		$pipe = fopen($this->pipePath, 'w');
 		if (! $pipe) {
-			ProcessException::error("{$this->type} | {$this->pid} | pipe | open | {$this->pipePath}");
+			ProcessException::error([
+				'msg' => [
+					'from'  => $this->type,
+					'extra' => "pipe open {$this->pipePath}"
+				]
+			]);
 			return;
 		}
 
-		ProcessException::info("{$this->type} | {$this->pid} | pipe | open | {$this->pipePath}");
+		ProcessException::info([
+			'msg' => [
+					'from'  => $this->type,
+					'extra' => "pipe open {$this->pipePath}"
+				]
+		]);
 		
 		$res = fwrite($pipe, $signal);
 		if (! $res) {
-			ProcessException::error("{$this->type} | {$this->pid} | pipe | write | {$this->pipePath} | {$signal}");
+			ProcessException::error([
+				'msg' => [
+					'from'  => $this->type,
+					'extra' => "pipe write {$this->pipePath}"
+				]
+			]);
 			return;
 		}
 
-		ProcessException::info("{$this->type} | {$this->pid} | pipe | write | {$this->pipePath} | {$signal}");
+		ProcessException::info([
+			'msg' => [
+					'from'  => $this->type,
+					'extra' => "pipe write {$this->pipePath}"
+				]
+		]);
 
 		if (! fclose($pipe)) {
-			ProcessException::error("{$this->type} | {$this->pid} | pipe | close | {$this->pipePath}");
+			ProcessException::error([
+				'msg' => [
+					'from'  => $this->type,
+					'extra' => "pipe close {$this->pipePath}"
+				]
+			]);
 			return;
 		}
 
-		ProcessException::info("{$this->type} | {$this->pid} | pipe | close | {$this->pipePath}");
+		ProcessException::info([
+			'msg' => [
+					'from'  => $this->type,
+					'extra' => "pipe close {$this->pipePath}"
+				]
+		]);
 	}
 
 	public function pipeRead()
@@ -80,7 +120,12 @@ abstract class Process
 
 		// read pipe
 		if ($msg = fread($workerPipe, $this->readPipeType)) {
-			ProcessException::info("{$this->type} | {$this->pid} | pipe | read | {$this->pipePath} | {$msg}");
+			ProcessException::info([
+				'msg' => [
+					'from'  => $this->type,
+					'extra' => "pipe read {$this->pipePath}"
+				]
+			]);
 		}
 		return $msg;
 	}

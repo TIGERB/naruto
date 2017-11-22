@@ -12,8 +12,12 @@ class Worker extends Process
 		$this->pid = $pid? : $this->pid;
 		
 		// log
-		$msg = $msg? : "{$this->type} | {$this->pid} | worker instance create ";
-		ProcessException::info($msg);
+		ProcessException::info([
+			'msg' => [
+				'from'  => $this->type,
+				'extra' => 'worker instance create'
+			]
+		]);
 		parent::__construct();
 	}
 

@@ -97,7 +97,7 @@ class Manager
 				break;
 	
 			default:
-				$worker = new Worker("master | $pid | worker instance create", $pid, 'master');
+				$worker = new Worker("master | worker instance create", $pid, 'master');
 				$this->workers[] = $worker;
 				break;
 		}

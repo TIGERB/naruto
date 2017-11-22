@@ -13,7 +13,12 @@ class Master extends Process
 		parent::__construct();
 		
 		// log
-		ProcessException::info("master | $this->pid | master instance create");
+		ProcessException::info([
+			'msg' => [
+				'from'  => 'master',
+				'extra' => 'master instance create'
+			]
+		]);
 
 		// make pipe
 		$this->pipeMake();
