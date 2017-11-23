@@ -20,10 +20,8 @@ class Manager
 	private $startNum = 5;
 	private $userPasswd = '';
 	private $signalSupport = [
-		// reload signal
-		'SIGUSR1' => 10,
-		// 
-		// 'SIGINT'  => 2,
+		'reload' => 10, // reload signal
+		'stop'   => 12,
 		// // 
 		// 'SIGQUIT'  => 3
 	];
@@ -43,7 +41,7 @@ class Manager
 
 		// register worker business logic
 		$this->workBusinessClosure = $closure;
-
+		
 		// exectue fork
 		$this->execFork();
 
@@ -70,6 +68,22 @@ class Manager
 				}
 			break;
 
+			// kill signal
+			case SIGUSR2:
+				// throw worker process to waitSignalProcessPool
+				$this->waitSignalProcessPool = [
+					'signal' => 'stop',
+					'pool'	 => $this->workers
+				];
+				// push reload signal to the worker processes from the master process
+				foreach ($this->workers as $v) {
+					if ($v->stop()) {
+						unset($this->workers[$v->pid]);
+					}
+				}
+				$this->master->stop();
+			break;
+
 			default:
 
 			break;
@@ -79,6 +93,7 @@ class Manager
 	private function registerSigHandler()
 	{
 		pcntl_signal(SIGUSR1, ['Naruto\Manager', 'defineSigHandler']);
+		pcntl_signal(SIGUSR2, ['Naruto\Manager', 'defineSigHandler']);
 		return;
 
 		if (empty($this->signalSupport)) {

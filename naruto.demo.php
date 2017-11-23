@@ -19,4 +19,5 @@ $instance = new Manager([
 	], function () {
 		var_dump('this is business logic');
 		sleep(10);
-	});
+	}
+);

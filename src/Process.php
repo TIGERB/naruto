@@ -136,8 +136,40 @@ abstract class Process
 		return $msg;
 	}
 
-	protected function processExit()
+	protected function clearPipe()
 	{
-		unlink($this->pipePath);
+		$msg = [
+			'msg' => [
+				'from'  => $this->type,
+				'extra' => "pipe clear {$this->pipePath}"
+			]
+		];
+		ProcessException::info($msg);
+		if (! unlink($this->pipePath)) {
+			ProcessException::error($msg);
+			return false;
+		}
+		return true;
+	}
+
+	public function stop()
+	{
+		$msg = [
+			'msg' => [
+				'from'  => $this->type,
+				'extra' => "{$this->pid} stop"
+			]
+		];
+		ProcessException::info($msg);
+		if (! posix_kill($this->pid, SIGKILL)) {
+			ProcessException::error($msg);
+			return false;
+		}
+		return true;
+	}
+
+	protected function setProcessName()
+	{
+		cli_set_process_title('naruto master');
 	}
 }

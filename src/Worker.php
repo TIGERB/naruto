@@ -49,7 +49,7 @@ class Worker extends Process
 					'extra'  => 'worker process exit'
 				]
 			]);
-			$this->processExit();
+			$this->clearPipe();
 			exit;
 			break;
 

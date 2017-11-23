@@ -11,6 +11,7 @@ class Master extends Process
 	public function __construct()
 	{
 		$this->type = 'master';
+		$this->setProcessName();
 		parent::__construct();
 		
 		// log
