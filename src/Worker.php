@@ -1,12 +1,32 @@
 <?php
+/****************************************************
+ *                     naruto                       *
+ *                                                  *
+ * An object-oriented multi process manager for PHP *
+ *                                                  *
+ *                    TIERGB                        *
+ *           <https://github.com/TIGERB>            *
+ *                                                  *
+ ****************************************************/
+
 namespace Naruto;
 
 use Naruto\Process;
 use Naruto\ProcessException;
 use Closure;
 
+/**
+ * work class
+ */
 class Worker extends Process
 {
+	/**
+	 * construct function
+	 *
+	 * @param string $msg
+	 * @param integer $pid
+	 * @param string $type
+	 */
 	public function __construct($msg = '', $pid = 0, $type = 'worker')
 	{
 		$this->type = $type;
@@ -22,6 +42,12 @@ class Worker extends Process
 		parent::__construct();
 	}
 
+	/**
+	 * the work hungup function
+	 *
+	 * @param Closure $closure
+	 * @return void
+	 */
 	public function hangup(Closure $closure)
 	{
 		while (true) {
@@ -38,6 +64,12 @@ class Worker extends Process
 		}
 	}
 
+	/**
+	 * dispatch signal for the worker process
+	 *
+	 * @param string $signal
+	 * @return void
+	 */
 	private function dispatchSig($signal = '')
 	{
 		switch ($signal) {

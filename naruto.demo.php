@@ -1,6 +1,15 @@
 <?php
+/****************************************************
+ *                     naruto                       *
+ *                                                  *
+ * An object-oriented multi process manager for PHP *
+ *                                                  *
+ *                    TIERGB                        *
+ *           <https://github.com/TIGERB>            *
+ *                                                  *
+ ****************************************************/
 
-// 注册自加载
+// register autoload
 spl_autoload_register('autoload');
 function autoload($class)
 {
@@ -15,9 +24,10 @@ use Naruto\Manager;
 
 $instance = new Manager([
 	'passwd' 	 => 'dvd',
-	'worker_num' => 3,
+	'worker_num' => 10,
 	], function () {
-		var_dump('this is business logic');
+		echo 'this is business logic' . PHP_EOL;
+		// mock business logic
 		sleep(10);
 	}
 );

@@ -1,22 +1,90 @@
 <?php
+/****************************************************
+ *                     naruto                       *
+ *                                                  *
+ * An object-oriented multi process manager for PHP *
+ *                                                  *
+ *                    TIERGB                        *
+ *           <https://github.com/TIGERB>            *
+ *                                                  *
+ ****************************************************/
+
 namespace Naruto;
 
 use Naruto\ProcessException;
 use Closure;
 
+/**
+ * process abstract class
+ */
 abstract class Process
 {
+	/**
+	 * current process type such as master and worker
+	 *
+	 * @var string
+	 */
 	protected $type = '';
+
+	/**
+	 * process id
+	 *
+	 * @var int
+	 */
 	public	  $pid = '';
+
+	/**
+	 * pipe name
+	 *
+	 * @var string
+	 */
 	protected $pipeName = '';
+
+	/**
+	 * pipe mode
+	 *
+	 * @var integer
+	 */
 	protected $pipeMode = 0777;
+
+	/**
+	 * pipe name prefix
+	 *
+	 * @var string
+	 */
 	protected $pipeNamePrefix = 'naruto.pipe';
+
+	/**
+	 * the folder for pipe file store
+	 *
+	 * @var string
+	 */
 	protected $pipeDir = '/tmp/';
+	
+	/**
+	 * pipe file path
+	 *
+	 * @var string
+	 */
 	protected $pipePath = '';
+
+	/**
+	 * the byte size read from pipe
+	 *
+	 * @var integer
+	 */
 	protected $readPipeType = 1024;
 
+	/**
+	 * hangup sleep time unit:second /s
+	 *
+	 * @var int
+	 */
 	const LOOP_SLEEP_TIME = 1;
 
+	/**
+	 * construct function
+	 */
 	public function __construct()
 	{
 		if (empty($this->pid)) {
@@ -26,8 +94,19 @@ abstract class Process
 		$this->pipePath = $this->pipeDir . $this->pipeName;
 	}
 
+	/**
+	 * hungup abstract funtion
+	 *
+	 * @param Closure $closure
+	 * @return void
+	 */
 	abstract protected function hangup(Closure $closure);
 
+	/**
+	 * create pipe
+	 *
+	 * @return void
+	 */
 	public function pipeMake()
 	{
 		if (! file_exists($this->pipePath)) {
@@ -50,6 +129,11 @@ abstract class Process
 		}
 	}
 
+	/**
+	 * write msg to the pipe
+	 *
+	 * @return void
+	 */
 	public function pipeWrite($signal = '')
 	{
 		$pipe = fopen($this->pipePath, 'w');
@@ -108,6 +192,11 @@ abstract class Process
 		]);
 	}
 
+	/**
+	 * read msg from the pipe
+	 *
+	 * @return void
+	 */
 	public function pipeRead()
 	{
 		// check pipe
@@ -136,6 +225,11 @@ abstract class Process
 		return $msg;
 	}
 
+	/**
+	 * clear pipe file
+	 *
+	 * @return void
+	 */
 	protected function clearPipe()
 	{
 		$msg = [
@@ -152,6 +246,11 @@ abstract class Process
 		return true;
 	}
 
+	/**
+	 * stop this process
+	 *
+	 * @return void
+	 */
 	public function stop()
 	{
 		$msg = [
@@ -168,6 +267,11 @@ abstract class Process
 		return true;
 	}
 
+	/**
+	 * set this process name
+	 *
+	 * @return void
+	 */
 	protected function setProcessName()
 	{
 		cli_set_process_title('naruto master');

@@ -1,4 +1,14 @@
 <?php
+/****************************************************
+ *                     naruto                       *
+ *                                                  *
+ * An object-oriented multi process manager for PHP *
+ *                                                  *
+ *                    TIERGB                        *
+ *           <https://github.com/TIGERB>            *
+ *                                                  *
+ ****************************************************/
+
 namespace Naruto;
 
 use Naruto\Master;
@@ -8,26 +18,83 @@ use Closure;
 
 class Manager
 {
+	/**
+	 * master process object
+	 *
+	 * @var object Process
+	 */
 	private $master = '';
+
+	/**
+	 * worker process objects
+	 *
+	 * @var array [Process]
+	 */
 	public  $workers = [];
+
+	/**
+	 * the pool for the worker that will be handle by the signal
+	 *
+	 * signal: string reload/stop
+	 * pool: array [Process]
+	 * 
+	 * @var array
+	 */
 	private $waitSignalProcessPool = [
 		'signal' => '',
 		'pool'	 => []
 	];
+
+	/**
+	 * the closure object which will be inject in the worker object
+	 *
+	 * @var object Closure
+	 */
 	private $workBusinessClosure = '';
+
+	/**
+	 * minimum idle worker process number
+	 *
+	 * @var int
+	 */
 	// private $minNum = 1;
+
+	/**
+	 * maximum idle worker process number
+	 *
+	 * @var object Process
+	 */
 	// private $maxNum = 10;
 	private $startNum = 5;
+
+	/**
+	 * linux user passwd
+	 *
+	 * @var string
+	 */
 	private $userPasswd = '';
+
+	/**
+	 * support linux signals
+	 *
+	 * @var array
+	 */
 	private $signalSupport = [
 		'reload' => 10, // reload signal
-		'stop'   => 12,
-		// // 
-		// 'SIGQUIT'  => 3
+		'stop'   => 12, // stop signal
+		'int'	 => 2 // interrupt signal
 	];
 
+	/**
+	 * hangup sleep time unit:second /s
+	 *
+	 * @var int
+	 */
 	const LOOP_SLEEP_TIME = 1;
 
+	/**
+	 * construct function
+	 */
 	public function __construct($config = [], Closure $closure)
 	{
 		// set user password
@@ -41,6 +108,13 @@ class Manager
 
 		// register worker business logic
 		$this->workBusinessClosure = $closure;
+
+		// int signal num
+		$this->signalSupport = [
+			'reload' => SIGUSR1,
+			'stop'	 => SIGUSR2,
+			'int'	 => SIGINT
+		];
 		
 		// exectue fork
 		$this->execFork();
@@ -52,11 +126,17 @@ class Manager
 		$this->hangup();
 	}
 
+	/**
+	 * define signal handler
+	 *
+	 * @param integer $signal
+	 * @return void
+	 */
 	public function defineSigHandler($signal = 0)
 	{
 		switch ($signal) {
 			// reload signal
-			case SIGUSR1:
+			case $this->signalSupport['reload']:
 				// throw worker process to waitSignalProcessPool
 				$this->waitSignalProcessPool = [
 					'signal' => 'reload',
@@ -69,7 +149,7 @@ class Manager
 			break;
 
 			// kill signal
-			case SIGUSR2:
+			case $this->signalSupport['stop']:
 				// throw worker process to waitSignalProcessPool
 				$this->waitSignalProcessPool = [
 					'signal' => 'stop',
@@ -90,21 +170,23 @@ class Manager
 		}
 	}
 
+	/**
+	 * register signal handler
+	 *
+	 * @return void
+	 */
 	private function registerSigHandler()
 	{
-		pcntl_signal(SIGUSR1, ['Naruto\Manager', 'defineSigHandler']);
-		pcntl_signal(SIGUSR2, ['Naruto\Manager', 'defineSigHandler']);
-		return;
-
-		if (empty($this->signalSupport)) {
-			// exception
-
-		}
 		foreach ($this->signalSupport as $v) {
-			pcntl_signal(SIGUSR1, ['Naruto\Manager', 'defineSigHandler']);
+			pcntl_signal($v, ['Naruto\Manager', 'defineSigHandler']);
 		}
 	}
 
+	/**
+	 * fork a worker process
+	 *
+	 * @return void
+	 */
 	private function fork()
 	{
 		$pid = pcntl_fork();
@@ -126,12 +208,17 @@ class Manager
 				break;
 	
 			default:
-				$worker = new Worker("master | worker instance create", $pid, 'master');
+				$worker = new Worker("worker instance create", $pid, 'master');
 				$this->workers[$pid] = $worker;
 				break;
 		}
 	}
 
+	/**
+	 * execute fork worker operation
+	 *
+	 * @return void
+	 */
 	private function execFork()
 	{
 		foreach (range(1, $this->startNum) as $v) {
@@ -139,6 +226,9 @@ class Manager
 		}
 	}
 
+	/**
+	 * hangup the master process
+	 */
 	private function hangup()
 	{
 		while (true) {

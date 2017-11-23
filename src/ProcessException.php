@@ -1,13 +1,44 @@
 <?php
+/****************************************************
+ *                     naruto                       *
+ *                                                  *
+ * An object-oriented multi process manager for PHP *
+ *                                                  *
+ *                    TIERGB                        *
+ *           <https://github.com/TIGERB>            *
+ *                                                  *
+ ****************************************************/
+
 namespace Naruto;
 
 use Exception;
 
+/**
+ * process exception class
+ */
 class ProcessException extends Exception
 {
+	/**
+	 * log method support
+	 *
+	 * @var array
+	 */
 	private static $methodSupport = ['info', 'error', 'debug'];
+
+	/**
+	 * the log path
+	 *
+	 * @var string
+	 */
 	private static $logPath = '/tmp/naruto.process.manager.log';
 	
+	/**
+	 * the magic __callStatics function
+	 *
+	 * @param string $method
+	 * @param array $data
+	 * @return void
+	 */
 	public static function __callStatic($method = '', $data = [])
 	{
 		$data = $data[0];
@@ -19,7 +50,14 @@ class ProcessException extends Exception
         error_log($msg, 3, self::$logPath);
 	}
 
-    private static function decorate($rank = 'info', $msg = [])
+	/**
+	 * decorate log msg
+	 *
+	 * @param string $rank
+	 * @param array $msg
+	 * @return void
+	 */
+	private static function decorate($rank = 'info', $msg = [])
 	{
 		$time = date('Y-m-d H:i:s', time());
 		$pid  = posix_getpid(); 
@@ -43,7 +81,6 @@ class ProcessException extends Exception
 			$tmp .= " | {$v}";
 		}
 		$tmp .= PHP_EOL;
-		
 		echo $tmp;
         return $tmp;
 	}
