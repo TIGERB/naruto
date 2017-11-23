@@ -4,6 +4,7 @@ namespace Naruto;
 use Naruto\Manager;
 use Naruto\Process;
 use Naruto\ProcessException;
+use Closure;
 
 class Master extends Process
 {
@@ -25,7 +26,7 @@ class Master extends Process
 		
 	}
 
-	public function hangup()
+	public function hangup(Closure $closure)
 	{
 		# do nothing...
 	}

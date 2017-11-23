@@ -3,6 +3,7 @@ namespace Naruto;
 
 use Naruto\Process;
 use Naruto\ProcessException;
+use Closure;
 
 class Worker extends Process
 {
@@ -21,23 +22,40 @@ class Worker extends Process
 		parent::__construct();
 	}
 
-	public function hangup()
+	public function hangup(Closure $closure)
 	{
 		while (true) {
+			// business logic
+			$closure($this);
+			
 			// handle pipe msg
 			if ($msg = $this->pipeRead()) {
-				var_dump($msg);
 				$this->dispatchSig($msg);
 			}
-
 
 			// precent cpu usage rate reach 100%
 			sleep(self::LOOP_SLEEP_TIME);
 		}
 	}
 
-	private function dispatchSig()
+	private function dispatchSig($signal = '')
 	{
-		
+		switch ($signal) {
+			case 'reload':
+			ProcessException::info([
+				'msg' => [
+					'from'   => $this->type,
+					'signal' => $signal,
+					'extra'  => 'worker process exit'
+				]
+			]);
+			$this->processExit();
+			exit;
+			break;
+
+			default:
+
+			break;
+		}
 	}
 }

@@ -94,3 +94,13 @@ sleep(1) 防止占用CPU
   + 
 ```
 
+问题
+
+fopen 
+
+阻塞的
+
+> although Linux supports non-blocking fopen() of a fifo, PHP doesn't
+
+posix_mkfifo -> use r+
+> The "r+" allows fopen to return immediately regardless of external  writer channel.

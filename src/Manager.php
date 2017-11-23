@@ -4,14 +4,19 @@ namespace Naruto;
 use Naruto\Master;
 use Naruto\Worker;
 use Naruto\ProcessException;
+use Closure;
 
 class Manager
 {
 	private $master = '';
 	public  $workers = [];
-	private $waitSignalProcessPool = [];
-	private $minNum = 1;
-	private $maxNum = 10;
+	private $waitSignalProcessPool = [
+		'signal' => '',
+		'pool'	 => []
+	];
+	private $workBusinessClosure = '';
+	// private $minNum = 1;
+	// private $maxNum = 10;
 	private $startNum = 5;
 	private $userPasswd = '';
 	private $signalSupport = [
@@ -25,7 +30,7 @@ class Manager
 
 	const LOOP_SLEEP_TIME = 1;
 
-	public function __construct($config = [])
+	public function __construct($config = [], Closure $closure)
 	{
 		// set user password
 		$this->userPasswd = $config['passwd'];
@@ -35,6 +40,9 @@ class Manager
 
 		// init master instance
 		$this->master = new Master();
+
+		// register worker business logic
+		$this->workBusinessClosure = $closure;
 
 		// exectue fork
 		$this->execFork();
@@ -51,6 +59,12 @@ class Manager
 		switch ($signal) {
 			// reload signal
 			case SIGUSR1:
+				// throw worker process to waitSignalProcessPool
+				$this->waitSignalProcessPool = [
+					'signal' => 'reload',
+					'pool'	 => $this->workers
+				];
+				// push reload signal to the worker processes from the master process
 				foreach ($this->workers as $v) {
 					$v->pipeWrite('reload');
 				}
@@ -90,15 +104,15 @@ class Manager
 				// init worker instance
 				$worker = new Worker();
 				$worker->pipeMake();
-				$worker->hangup();
+				$worker->hangup($this->workBusinessClosure);
 
-				sleep(10);
+				// worker exit
 				exit;
 				break;
 	
 			default:
 				$worker = new Worker("master | worker instance create", $pid, 'master');
-				$this->workers[] = $worker;
+				$this->workers[$pid] = $worker;
 				break;
 		}
 	}
@@ -120,8 +134,21 @@ class Manager
 			// pcntl_wait($status);
 			foreach ($this->workers as $k => $v) {
 				$res = pcntl_waitpid($v->pid, $status, WNOHANG);
-				if ($res == -1 || $res > 0) {
-					unset($this->workers[$k]);
+				// if ($res == -1 || $res = 0) {
+				// 	// exception
+				// 	continue;
+				// }
+				if ($res > 0) {
+					unset($this->workers[$res]);
+					// var_dump($res);
+					if ($this->waitSignalProcessPool['signal'] === 'reload') {
+						if (array_key_exists($res, $this->waitSignalProcessPool['pool'])) {
+							unset($this->waitSignalProcessPool['pool'][$res]);
+							// fork a new worker
+							$this->fork();
+						}
+					}
+
 				}
 			}
 

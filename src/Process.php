@@ -2,6 +2,7 @@
 namespace Naruto;
 
 use Naruto\ProcessException;
+use Closure;
 
 abstract class Process
 {
@@ -25,7 +26,7 @@ abstract class Process
 		$this->pipePath = $this->pipeDir . $this->pipeName;
 	}
 
-	abstract protected function hangup();
+	abstract protected function hangup(Closure $closure);
 
 	public function pipeMake()
 	{
@@ -74,7 +75,9 @@ abstract class Process
 			ProcessException::error([
 				'msg' => [
 					'from'  => $this->type,
-					'extra' => "pipe write {$this->pipePath}"
+					'extra' => "pipe write {$this->pipePath}",
+					'signal'=> $signal,
+					'res'   => $res
 				]
 			]);
 			return;
@@ -114,9 +117,12 @@ abstract class Process
 
 		// open pipe
 		do {
-			$workerPipe = fopen($this->pipePath, 'r');
+			$workerPipe = fopen($this->pipePath, 'r+'); // The "r+" allows fopen to return immediately regardless of external  writer channel. 
 			sleep(self::LOOP_SLEEP_TIME);
 		} while (! $workerPipe);
+
+		// set pipe switch a non blocking stream
+		stream_set_blocking($workerPipe, false);
 
 		// read pipe
 		if ($msg = fread($workerPipe, $this->readPipeType)) {
@@ -130,4 +136,8 @@ abstract class Process
 		return $msg;
 	}
 
+	protected function processExit()
+	{
+		unlink($this->pipePath);
+	}
 }

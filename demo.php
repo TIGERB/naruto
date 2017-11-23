@@ -15,5 +15,8 @@ use Naruto\Manager;
 
 $instance = new Manager([
 	'passwd' 	 => 'dvd',
-	'worker_num' => 1,
-]);
+	'worker_num' => 3,
+	], function () {
+		var_dump('this is business logic');
+		sleep(10);
+	});
