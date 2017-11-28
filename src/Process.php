@@ -76,6 +76,20 @@ abstract class Process
 	protected $readPipeType = 1024;
 
 	/**
+	 * worker process exit flag
+	 *
+	 * @var boolean
+	 */
+	protected $workerExitFlag = false;
+
+	/**
+	 * signal
+	 *
+	 * @var string
+	 */
+	protected $signal = '';
+
+	/**
 	 * hangup sleep time unit:second /s
 	 *
 	 * @var int
@@ -170,7 +184,9 @@ abstract class Process
 		ProcessException::info([
 			'msg' => [
 					'from'  => $this->type,
-					'extra' => "pipe write {$this->pipePath}"
+					'extra' => "pipe write {$this->pipePath}",
+					'signal'=> $signal,
+					'res'   => $res
 				]
 		]);
 
@@ -218,7 +234,8 @@ abstract class Process
 			ProcessException::info([
 				'msg' => [
 					'from'  => $this->type,
-					'extra' => "pipe read {$this->pipePath}"
+					'extra' => "pipe read {$this->pipePath}",
+					'signal'=> $msg,
 				]
 			]);
 		}

@@ -53,10 +53,15 @@ class Worker extends Process
 		while (true) {
 			// business logic
 			$closure($this);
+
+			// check exit flag
+			if ($this->workerExitFlag) {
+				$this->workerExit();
+			}
 			
 			// handle pipe msg
-			if ($msg = $this->pipeRead()) {
-				$this->dispatchSig($msg);
+			if ($this->signal = $this->pipeRead()) {
+				$this->dispatchSig();
 			}
 
 			// precent cpu usage rate reach 100%
@@ -67,27 +72,42 @@ class Worker extends Process
 	/**
 	 * dispatch signal for the worker process
 	 *
-	 * @param string $signal
 	 * @return void
 	 */
-	private function dispatchSig($signal = '')
+	private function dispatchSig()
 	{
-		switch ($signal) {
+		switch ($this->signal) {
+			// reload
 			case 'reload':
-			ProcessException::info([
-				'msg' => [
-					'from'   => $this->type,
-					'signal' => $signal,
-					'extra'  => 'worker process exit'
-				]
-			]);
-			$this->clearPipe();
-			exit;
+			$this->workerExitFlag = true;
+			break;
+			
+			// stop
+			case 'stop':
+			$this->workerExitFlag = true;
 			break;
 
 			default:
 
 			break;
 		}
+	}
+
+	/**
+	 * exit worker
+	 *
+	 * @return void
+	 */
+	private function workerExit()
+	{
+		ProcessException::info([
+			'msg' => [
+				'from'   => $this->type,
+				'signal' => $this->signal,
+				'extra'  => 'worker process exit'
+			]
+		]);
+		$this->clearPipe();
+		exit;
 	}
 }

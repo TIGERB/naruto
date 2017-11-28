@@ -16,6 +16,9 @@ use Naruto\Worker;
 use Naruto\ProcessException;
 use Closure;
 
+/**
+ * process manager
+ */
 class Manager
 {
 	/**
@@ -82,7 +85,7 @@ class Manager
 	private $signalSupport = [
 		'reload' => 10, // reload signal
 		'stop'   => 12, // stop signal
-		'int'	 => 2 // interrupt signal
+		// 'int'	 => 2 // interrupt signal
 	];
 
 	/**
@@ -113,7 +116,7 @@ class Manager
 		$this->signalSupport = [
 			'reload' => SIGUSR1,
 			'stop'	 => SIGUSR2,
-			'int'	 => SIGINT
+			// 'int'	 => SIGINT
 		];
 		
 		// exectue fork
@@ -157,11 +160,8 @@ class Manager
 				];
 				// push reload signal to the worker processes from the master process
 				foreach ($this->workers as $v) {
-					if ($v->stop()) {
-						unset($this->workers[$v->pid]);
-					}
+					$v->pipeWrite('stop');
 				}
-				$this->master->stop();
 			break;
 
 			default:
@@ -245,7 +245,7 @@ class Manager
 				// }
 				if ($res > 0) {
 					unset($this->workers[$res]);
-					// var_dump($res);
+					
 					if ($this->waitSignalProcessPool['signal'] === 'reload') {
 						if (array_key_exists($res, $this->waitSignalProcessPool['pool'])) {
 							unset($this->waitSignalProcessPool['pool'][$res]);
@@ -254,6 +254,19 @@ class Manager
 						}
 					}
 
+					if ($this->waitSignalProcessPool['signal'] === 'stop') {
+						if (array_key_exists($res, $this->waitSignalProcessPool['pool'])) {
+							unset($this->waitSignalProcessPool['pool'][$res]);
+						}
+					}
+
+				}
+			}
+
+			if ($this->waitSignalProcessPool['signal'] === 'stop') {
+				// all worker stop then stop the master process
+				if (empty($this->waitSignalProcessPool['pool'])) {
+					$this->master->stop();
 				}
 			}
 

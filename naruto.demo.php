@@ -21,12 +21,14 @@ function autoload($class)
 /* -----------------------demo------------------- */
 
 use Naruto\Manager;
+use Naruto\Process;
 
 $instance = new Manager([
 	'passwd' 	 => 'dvd',
-	'worker_num' => 10,
-	], function () {
-		echo 'this is business logic' . PHP_EOL;
+	'worker_num' => 3,
+	], function (Process $worker) {
+		$time = microtime(true);
+		echo "[worker:{$worker->pid} {$time}] this is business logic" . PHP_EOL;
 		// mock business logic
 		sleep(10);
 	}
