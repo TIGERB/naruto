@@ -100,6 +100,9 @@ class Manager
 	 */
 	public function __construct($config = [], Closure $closure)
 	{
+		// welcome
+		$this->welcome();
+		
 		// set user password
 		$this->userPasswd = $config['passwd'];
 
@@ -127,6 +130,32 @@ class Manager
 
 		// hangup master
 		$this->hangup();
+	}
+
+	/**
+	 * weclome slogan
+	 *
+	 * @return void
+	 */
+	public function welcome()
+	{
+		$welcome = <<<WELCOME
+\033[36m
+                       _        
+                      | |       
+_ __   __ _ _ __ _   _| |_ ___  
+| '_ \ / _` | '__| | | | __/ _ \ 
+| | | | (_| | |  | |_| | || (_) |
+|_| |_|\__,_|_|   \__,_|\__\___/ .TIGERB.cn
+			
+An object-oriented multi process manager for PHP
+
+Version: 0.1.0
+
+\033[0m
+WELCOME;
+		
+		echo $welcome;
 	}
 
 	/**

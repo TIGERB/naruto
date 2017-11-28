@@ -60,7 +60,22 @@ class ProcessException extends Exception
 	private static function decorate($rank = 'info', $msg = [])
 	{
 		$time = date('Y-m-d H:i:s', time());
-		$pid  = posix_getpid(); 
+		$pid  = posix_getpid();
+		switch ($rank) {
+			case 'info':
+				$rank = "\033[36m{$rank} \033[0m";
+			break;
+			case 'error':
+				$rank = "\033[31m{$rank}\033[0m";
+			break;
+			case 'debug':
+				$rank = "\033[32m{$rank}\033[0m";
+			break;
+
+			default:
+			
+			break;
+		}
 		$default = [
 			$time,
 			$rank,

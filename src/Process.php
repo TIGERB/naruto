@@ -291,6 +291,6 @@ abstract class Process
 	 */
 	protected function setProcessName()
 	{
-		cli_set_process_title('naruto master');
+		// cli_set_process_title('naruto master');
 	}
 }

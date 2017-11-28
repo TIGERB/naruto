@@ -22,13 +22,19 @@ function autoload($class)
 
 use Naruto\Manager;
 use Naruto\Process;
+use Naruto\ProcessException;
 
 $instance = new Manager([
 	'passwd' 	 => 'dvd',
 	'worker_num' => 3,
 	], function (Process $worker) {
 		$time = microtime(true);
-		echo "[worker:{$worker->pid} {$time}] this is business logic" . PHP_EOL;
+		ProcessException::debug([
+			'msg' => [
+				'microtime' => $time,
+				'debug' 	=> 'this is business logic'
+			]
+		]);
 		// mock business logic
 		sleep(10);
 	}
