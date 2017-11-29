@@ -93,7 +93,7 @@ class Manager
 	private $signalSupport = [
 		'reload' => 10, // reload signal
 		'stop'   => 12, // stop signal
-		'int'	 => 2 // interrupt signal
+		// 'int'	 => 2 // interrupt signal
 	];
 
 	/**

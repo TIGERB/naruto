@@ -230,6 +230,7 @@ abstract class Process
 
 		// open pipe
 		do {
+			// fopen() will block if the file to be opened is a fifo. This is true whether it's opened in "r" or "w" mode.  (See man 7 fifo: this is the correct, default behaviour; although Linux supports non-blocking fopen() of a fifo, PHP doesn't).
 			$workerPipe = fopen($this->pipePath, 'r+'); // The "r+" allows fopen to return immediately regardless of external  writer channel. 
 			usleep(self::$hangupLoopMicrotime);
 		} while (! $workerPipe);
