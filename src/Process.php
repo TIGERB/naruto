@@ -90,22 +90,30 @@ abstract class Process
 	protected $signal = '';
 
 	/**
-	 * hangup sleep time unit:second /s
+	 * hangup sleep time unit:microsecond /μs
+	 * 
+	 * default 200000μs
 	 *
 	 * @var int
 	 */
-	const LOOP_SLEEP_TIME = 1;
+	protected static $hangupLoopMicrotime = 200000;
 
 	/**
 	 * construct function
+	 * 
+	 * @param array $config config
 	 */
-	public function __construct()
+	public function __construct($config = [])
 	{
 		if (empty($this->pid)) {
 			$this->pid = posix_getpid();
 		}
 		$this->pipeName = $this->pipeNamePrefix . $this->pid;
 		$this->pipePath = $this->pipeDir . $this->pipeName;
+
+		// set hangup sleep time
+		self::$hangupLoopMicrotime = isset($config['hangup_loop_microtime'])? 
+		$config['hangup_loop_microtime']: self::$hangupLoopMicrotime;
 	}
 
 	/**
@@ -128,7 +136,7 @@ abstract class Process
 				ProcessException::error([
 					'msg' => [
 						'from'  => $this->type,
-						'extra' => "pipe make {$this->pipePath}"
+						'extra' => "pipe make {$this->pipePath}",
 					]
 				]);
 				exit;
@@ -217,13 +225,13 @@ abstract class Process
 	{
 		// check pipe
 		while (! file_exists($this->pipePath)) {
-			sleep(self::LOOP_SLEEP_TIME);
+			usleep(self::$hangupLoopMicrotime);
 		}
 
 		// open pipe
 		do {
 			$workerPipe = fopen($this->pipePath, 'r+'); // The "r+" allows fopen to return immediately regardless of external  writer channel. 
-			sleep(self::LOOP_SLEEP_TIME);
+			usleep(self::$hangupLoopMicrotime);
 		} while (! $workerPipe);
 
 		// set pipe switch a non blocking stream
@@ -260,6 +268,7 @@ abstract class Process
 			ProcessException::error($msg);
 			return false;
 		}
+		shell_exec("rm -f {$this->pipePath}");
 		return true;
 	}
 
@@ -277,6 +286,7 @@ abstract class Process
 			]
 		];
 		ProcessException::info($msg);
+		$this->clearPipe();
 		if (! posix_kill($this->pid, SIGKILL)) {
 			ProcessException::error($msg);
 			return false;

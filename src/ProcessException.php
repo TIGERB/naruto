@@ -45,9 +45,12 @@ class ProcessException extends Exception
 		if (! in_array($method, self::$methodSupport)) {
 			throw new Exception('log method not support', 500);
 		}
-		self::$logPath = ($data['path']?? '')? : self::$logPath;
+		self::$logPath = (isset($data['path'])? $data['path']: '')? : self::$logPath;
         $msg = self::decorate($method, $data['msg']);
-        error_log($msg, 3, self::$logPath);
+		error_log($msg, 3, self::$logPath);
+		if ($method === 'error') {
+			exit;
+		}
 	}
 
 	/**
@@ -83,7 +86,8 @@ class ProcessException extends Exception
 		];
 
 		if (! isset($msg['from']) || empty($msg['from'])) {
-			$default[] = 'master';
+			$default[] = 'worker';
+			unset($msg['from']);
 		}
 
 		$msg  = array_merge($default, $msg);

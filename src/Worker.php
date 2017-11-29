@@ -26,11 +26,18 @@ class Worker extends Process
 	 * @param string $msg
 	 * @param integer $pid
 	 * @param string $type
+	 * @param array $config config [
+	 * 	'pid' => 1212,
+	 * 	'type'=> 'worker',
+	 *  'pipe_dir' => '/tmp/'
+	 * ]
 	 */
-	public function __construct($msg = '', $pid = 0, $type = 'worker')
+	public function __construct($config = [])
 	{
-		$this->type = $type;
-		$this->pid = $pid? : $this->pid;
+		$this->type    = isset($config['type'])? $config['type']: 'worker';
+		$this->pid     = isset($config['pid'])? $config['pid']: $this->pid;
+		$this->pipeDir = isset($config['pipe_dir']) && ! empty($config['pipe_dir'])
+		? $config['pipe_dir']: $this->pipeDir;
 		
 		// log
 		ProcessException::info([
@@ -65,7 +72,7 @@ class Worker extends Process
 			}
 
 			// precent cpu usage rate reach 100%
-			sleep(self::LOOP_SLEEP_TIME);
+			usleep(self::$hangupLoopMicrotime);
 		}
 	}
 

@@ -15,6 +15,7 @@ use Naruto\Master;
 use Naruto\Worker;
 use Naruto\ProcessException;
 use Closure;
+use Exception;
 
 /**
  * process manager
@@ -78,6 +79,13 @@ class Manager
 	private $userPasswd = '';
 
 	/**
+	 * the directory name of the process's pipe will be storaged
+	 *
+	 * @var string
+	 */
+	private $pipeDir = '';
+
+	/**
 	 * support linux signals
 	 *
 	 * @var array
@@ -85,15 +93,17 @@ class Manager
 	private $signalSupport = [
 		'reload' => 10, // reload signal
 		'stop'   => 12, // stop signal
-		// 'int'	 => 2 // interrupt signal
+		'int'	 => 2 // interrupt signal
 	];
 
 	/**
-	 * hangup sleep time unit:second /s
+	 * hangup sleep time unit:microsecond /μs
+	 * 
+	 * default 200000μs
 	 *
 	 * @var int
 	 */
-	const LOOP_SLEEP_TIME = 1;
+	private static $hangupLoopMicrotime = 200000;
 
 	/**
 	 * construct function
@@ -102,12 +112,9 @@ class Manager
 	{
 		// welcome
 		$this->welcome();
-		
-		// set user password
-		$this->userPasswd = $config['passwd'];
 
-		// set worker start number
-		$this->startNum = $config['worker_num'];
+		// configure
+		$this->configure($config);
 
 		// init master instance
 		$this->master = new Master();
@@ -159,6 +166,30 @@ WELCOME;
 	}
 
 	/**
+	 * configure
+	 *
+	 * @param array $config
+	 * @return void
+	 */
+	public function configure($config = [])
+	{
+		// set user password
+		$this->userPasswd = $config['passwd'];
+		
+		// set worker start number
+		$this->startNum = isset($config['worker_num'])? 
+			$config['worker_num']: $this->startNum;
+
+		// set hangup sleep time
+		self::$hangupLoopMicrotime = isset($config['hangup_loop_microtime'])? 
+			$config['hangup_loop_microtime']: self::$hangupLoopMicrotime;
+
+		// set pipe dir
+		$this->pipeDir = isset($config['pipe_dir'])? 
+		$config['pipe_dir']: '';
+	}
+
+	/**
 	 * define signal handler
 	 *
 	 * @param integer $signal
@@ -182,6 +213,18 @@ WELCOME;
 
 			// kill signal
 			case $this->signalSupport['stop']:
+				// throw worker process to waitSignalProcessPool
+				$this->waitSignalProcessPool = [
+					'signal' => 'stop',
+					'pool'	 => $this->workers
+				];
+				// push reload signal to the worker processes from the master process
+				foreach ($this->workers as $v) {
+					$v->pipeWrite('stop');
+				}
+			break;
+
+			case $this->signalSupport['int']:
 				// throw worker process to waitSignalProcessPool
 				$this->waitSignalProcessPool = [
 					'signal' => 'stop',
@@ -227,18 +270,43 @@ WELCOME;
 				break;
 	
 			case 0:
-				// init worker instance
-				$worker = new Worker();
-				$worker->pipeMake();
-				$worker->hangup($this->workBusinessClosure);
+				try {
+					// init worker instance
+					$worker = new Worker([
+						'pipe_dir' => $this->pipeDir
+					]);
+					$worker->pipeMake();
+					$worker->hangup($this->workBusinessClosure);
+				} catch (Exception $e) {
+					ProcessException::error([
+						'msg' => [
+							'msg'  => $e->getMessage(),
+							'file' => $e->getFile(),
+							'line' => $e->getLine(),
+						]
+					]);
+				}
 
 				// worker exit
 				exit;
 				break;
 	
 			default:
-				$worker = new Worker("worker instance create", $pid, 'master');
-				$this->workers[$pid] = $worker;
+				try {
+					$worker = new Worker([
+						'type' => 'master',
+						'pid'  => $pid
+					]);
+					$this->workers[$pid] = $worker;
+				} catch (Exception $e) {
+					ProcessException::error([
+						'msg' => [
+							'msg'  => $e->getMessage(),
+							'file' => $e->getFile(),
+							'line' => $e->getLine(),
+						]
+					]);
+				}
 				break;
 		}
 	}
@@ -303,7 +371,7 @@ WELCOME;
 			// $this->master->pipeRead();
 
 			// precent cpu usage rate reach 100%
-			sleep(self::LOOP_SLEEP_TIME);
+			usleep(self::$hangupLoopMicrotime);
 		}
 	}
 }

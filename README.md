@@ -61,7 +61,7 @@ sleep(1) 防止占用CPU
   + startNum: 启动进程数量
   + userPasswd: linux用户密码
   + signalSupport: 支持的信号
-  + LOOP_SLEEP_TIME: 挂起间隔睡眠时间
+  + hangupLoopMicrotime: 挂起间隔睡眠时间
 - method
   + fork: fork子进程方法
   + execFork: 执行fork子进程方法
