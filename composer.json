@@ -1,16 +1,15 @@
 {
     "name": "tigerb/naruto",
     "description": "An object-oriented multi process manager for PHP",
-    "type": "project",
-    "homepage": "http://tigerb.cn",
-    "minimum-stability": "stable",
+    "version": "0.1.0",
+    "type": "framework",
+    "homepage": "http://naruto.tiegrb.cn/",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "TIGERB",
-            "email": "tigerbcode@gmail.com"
-        }
-    ],
+    "minimum-stability": "stable",
+    "authors": [{
+        "name": "tigerb",
+        "email": "tigerbcode@gmail.com"
+    }],
     "require": {},
     "autoload": {
         "psr-4": {
