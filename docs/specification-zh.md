@@ -203,3 +203,7 @@ worker实体类MasterProcess
 ```
 
 最后我们需要做的就是优雅的填充我们的代码了。
+
+# 最后
+
+<p align="center"><img src="http://cdn.tigerb.cn/naruto-zsh.png" width="500px"></p>
