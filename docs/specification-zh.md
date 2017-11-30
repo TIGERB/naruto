@@ -56,7 +56,7 @@ switch ($pid) {
 
   case 0:
     // worker context
-    exit; // 这里exit掉，避免worker继续执行下面的代码而造成一些问题(下文会提到)
+    exit; // 这里exit掉，避免worker继续执行下面的代码而造成一些问题
     break;
 
   default:
@@ -205,5 +205,11 @@ worker实体类MasterProcess
 最后我们需要做的就是优雅的填充我们的代码了。
 
 # 最后
+
+项目地址 <https://github.com/TIGERB/naruto>
+
+个人知识还有很多不足，如果有写的不对的地方，希望大家及时指正。
+
+THX~
 
 <p align="center"><img src="http://cdn.tigerb.cn/naruto-zsh.png" width="500px"></p>
