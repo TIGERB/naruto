@@ -14,7 +14,8 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Naruto\\": "/src/"
+            "Naruto\\": "/src/",
+            "App\\": "/app/"
         }
     }
 }
