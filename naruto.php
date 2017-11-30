@@ -23,7 +23,7 @@ function autoload($class)
 use Naruto\Manager;
 use Naruto\Process;
 use Naruto\ProcessException;
-use Exception;
+use Exception as Ex;
 
 /**
  * example
@@ -54,7 +54,7 @@ try {
 			usleep(10000000);
 		}
 	);
-} catch (Exception $e) {
+} catch (Ex $e) {
 	ProcessException::error([
 		'msg' => [
 			'msg'  => $e->getMessage(),
