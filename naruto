@@ -9,6 +9,58 @@
  *                                                  *
  ****************************************************/
 
+/**
+ * 命令行参数list
+ */
+$help = function () {
+    $string =  <<<HELP
+    \033[36m Usage \033[0m:
+        php naruto --<arguments>=<value> ...
+
+    \033[36m Example \033[0m:
+        php naruto --worker-num=5 --passwd=123456
+
+    \033[36m Params mean \033[0m:
+        \033[33m worker-num \033[0m: Worker start number
+        \033[33m passwd \033[0m: Unix user passwd
+        \033[33m help \033[0m: Display command list
+
+                       _        
+                      | |       
+_ __   __ _ _ __ _   _| |_ ___  
+| '_ \ / _` | '__| | | | __/ _ \ 
+| | | | (_| | |  | |_| | || (_) |
+|_| |_|\__,_|_|   \__,_|\__\___/ .TIGERB.cn
+
+An object-oriented multi process manager for PHP
+
+Version: 0.2.0
+    \n
+HELP;
+
+    die($string);
+};
+
+/**
+ * 获取参数
+ */
+if (count($argv) === 1) {
+    $help();
+}
+$input = [];
+foreach ($argv as $v) {
+    preg_match_all('/^--(.*)/', $v, $match);
+    if (isset($match[1][0]) && ! empty($match[1][0])) {
+        $match = explode('=', $match[1][0]);
+        if ($match[0] === 'help') {
+            $help();
+        }
+        if (isset($match[1])) {
+            $input[$match[0]] = $match[1];
+        }
+    }
+}
+
 // register autoload
 spl_autoload_register('autoload');
 function autoload($class)
@@ -22,8 +74,8 @@ function autoload($class)
 
 use Naruto\Manager;
 use Naruto\Process;
-use Naruto\ProcessException;
 use Exception as Ex;
+use App\Demo\Test;
 
 /**
  * example
@@ -38,20 +90,14 @@ use Exception as Ex;
  */
 try {
 	$instance = new Manager([
-		'passwd' 	 => 'dvd',
-		'worker_num' => 5,
+		'passwd' 	 => isset($input['passwd'])? $input['passwd']: '',
+		'worker_num' => isset($input['worker-num'])? $input['worker-num']: 5,
 		// 'pipe_dir'   => '/tmp/naruto/'
 		// 'hangup_loop_microtime' => 200000
 		], function (Process $worker) {
-			$time = microtime(true);
-			ProcessException::debug([
-				'msg' => [
-					'microtime' => $time,
-					'debug' 	=> 'this is the business logic'
-				]
-			]);
 			// mock business logic
-			usleep(10000000);
+			$instance = new Test();
+			$instance->businessLogic();
 		}
 	);
 } catch (Ex $e) {

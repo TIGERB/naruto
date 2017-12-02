@@ -38,7 +38,7 @@ $instance = new Manager([
 ### Run
 
 ```
-php naruto.php
+php naruto --worker-num=5 --passwd=123456
 ```
 
 ### Manager process
@@ -53,6 +53,6 @@ php naruto.php
 
 # TODO
 
-- Implement a shell script to control the process
-- Implement a daemon for worker by the master
-- Add more information for the log
+- [ ] Implement a shell script to control the process
+- [ ] Implement a daemon for worker by the master
+- [ ] Add more information for the log
