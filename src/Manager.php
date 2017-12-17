@@ -91,8 +91,9 @@ class Manager
 	 * @var array
 	 */
 	private $signalSupport = [
-		'reload' => 10, // reload signal
-		'stop'   => 12, // stop signal
+		'reload'    => 10, // reload signal
+		'stop'      => 12, // stop signal
+		'terminate' => 15, // terminate signal
 		// 'int'	 => 2 // interrupt signal
 	];
 
@@ -124,9 +125,9 @@ class Manager
 
 		// int signal num
 		$this->signalSupport = [
-			'reload' => SIGUSR1,
-			'stop'	 => SIGUSR2,
-			// 'int'	 => SIGINT
+			'reload'    => SIGUSR1,
+			'stop'	    => SIGUSR2,
+			'terminate' => SIGTERM
 		];
 		
 		// exectue fork
@@ -224,16 +225,23 @@ WELCOME;
 				}
 			break;
 
-			case $this->signalSupport['int']:
-				// throw worker process to waitSignalProcessPool
-				$this->waitSignalProcessPool = [
-					'signal' => 'stop',
-					'pool'	 => $this->workers
-				];
-				// push reload signal to the worker processes from the master process
+			// case $this->signalSupport['int']:
+			// 	// kill -9 all worker process
+			// 	foreach ($this->workers as $v) {
+			// 		posix_kill($v->pid, SIGTERM);
+			// 	}
+			// 	// kill -9 master process
+			// 	posix_kill($this->pid, SIGTERM);
+			// break;
+			
+			case $this->signalSupport['terminate']:
+				// kill -9 all worker process
 				foreach ($this->workers as $v) {
-					$v->pipeWrite('stop');
+					posix_kill($v->pid, SIGTERM);
 				}
+				// kill -9 master process
+				echo "stop... \n";
+				exit;
 			break;
 
 			default:

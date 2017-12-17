@@ -31,6 +31,11 @@ case $1 in
     php naruto --worker-num="$2" --passwd="$3"
     ;;
 "reload")
+    if [[ "$ppid" == '' ]]
+    then
+        echo -e "naruto is not running..."
+        exit
+    fi
     kill -s SIGUSR1 "$ppid"
     if [[ $? != 0 ]]
     then
@@ -40,6 +45,11 @@ case $1 in
     echo -e "reload signal be sent success..."
     ;;
 "quit")
+    if [[ "$ppid" == '' ]]
+    then
+        echo -e "naruto is not running..."
+        exit
+    fi
     kill -s SIGUSR2 "$ppid"
     if [[ $? != 0 ]]
     then
@@ -49,6 +59,11 @@ case $1 in
     echo -e "quit signal be sent success..."
     ;;
 "stop")
+    if [[ "$ppid" == '' ]]
+    then
+        echo -e "naruto is not running..."
+        exit
+    fi
     kill -s SIGTERM "$ppid"
     if [[ $? != 0 ]]
     then
