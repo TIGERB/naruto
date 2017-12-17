@@ -1,0 +1,76 @@
+#!/bin/bash
+#                       _        
+#                      | |       
+#_ __   __ _ _ __ _   _| |_ ___  
+#| '_ \ / _` | '__| | | | __/ _ \ 
+#| | | | (_| | |  | |_| | || (_) |
+#|_| |_|\__,_|_|   \__,_|\__\___/ .TIGERB.cn
+#
+#An object-oriented multi process manager for PHP
+#
+#Version: 0.2.1
+#
+
+# Find the master process pid
+ppid=$(pstree | grep 'php naruto' | grep '\-+' | awk '{print $4}'
+)
+
+case $1 in
+"start")
+    if [[ "$ppid" != '' ]]
+    then
+        echo -e "naruto is already running..."
+        exit
+    fi
+    phpversion=$(php -v | grep 'PHP 7')
+    if [[ "$phpversion" == '' ]]
+    then
+        echo -e "Please use php 7+"
+        exit
+    fi
+    php naruto --worker-num="$2" --passwd="$3"
+    ;;
+"reload")
+    kill -s SIGUSR1 "$ppid"
+    if [[ $? != 0 ]]
+    then
+        echo -e "reload signal be sent fail..."
+        exit
+    fi 
+    echo -e "reload signal be sent success..."
+    ;;
+"quit")
+    kill -s SIGUSR2 "$ppid"
+    if [[ $? != 0 ]]
+    then
+        echo -e "quit signal be sent fail..."
+        exit
+    fi 
+    echo -e "quit signal be sent success..."
+    ;;
+"stop")
+    kill -s SIGTERM "$ppid"
+    if [[ $? != 0 ]]
+    then
+        echo -e "stop signal be sent fail..."
+        exit
+    fi 
+    echo -e "stop signal be sent success..."
+    ;;
+*)
+
+cat <<EOF
+    Usage:
+        naruto start/reload/quit/stop <worker-num> <passwd>
+
+    Example:
+        naruto start 10 123456
+        naruto reload
+        naruto stop
+        naruto quit
+        ...    
+EOF
+echo -e "\n \033[36m An object-oriented multi process manager for PHP\033[0m \n"
+echo -e "  \033[36mVersion: 0.2.1 \033[0m \n"
+    exit
+esac
