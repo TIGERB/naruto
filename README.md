@@ -8,7 +8,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.1.0
+Version: 0.2.1
 
 ```
 
@@ -37,14 +37,18 @@ $instance = new Manager([
 
 ### Run
 
+> export PATH="$PATH:\<yourpath\>/naruto/bin"
+
 ```
-php naruto --worker-num=5 --passwd=123456
+naruto start/reload/quit/stop
 ```
 
 ### Manager process
 
-- reload: kill -SIGUSR1 [master pid]
-- stop: kill -SIGUSR2 [master pid]
+- start \<worker-num\> \<passwd\>: start the naruto
+- reload: gracefully quit&start the worker process
+- quit: gracefully exit
+- stop: forcefully exit
 
 # Specification
 
@@ -53,6 +57,6 @@ php naruto --worker-num=5 --passwd=123456
 
 # TODO
 
-- [ ] Implement a shell script to control the process
+- [x] Implement a shell script to control the process
 - [ ] Implement a daemon for worker by the master
 - [ ] Add more information for the log
