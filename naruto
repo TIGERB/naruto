@@ -34,7 +34,7 @@ _ __   __ _ _ __ _   _| |_ ___
 
 An object-oriented multi process manager for PHP
 
-Version: 0.2.1
+Version: 0.3.0
     \n
 HELP;
 
@@ -65,9 +65,18 @@ foreach ($argv as $v) {
 spl_autoload_register('autoload');
 function autoload($class)
 {
-	$path = str_replace('\\', '/', $class);
-	$path = str_replace('Naruto', 'src', $path);
-  	require __DIR__ . '/' . $path . '.php';
+	$classOrigin = $class;
+    $classInfo   = explode('\\', $class);
+    $className   = array_pop($classInfo);
+    foreach ($classInfo as &$v) {
+        $v = strtolower($v);
+    }
+    unset($v);
+    array_push($classInfo, $className);
+    $class       = implode('\\', $classInfo);
+    $class       = str_replace('naruto', 'src', $class);
+    $classPath   = __DIR__ . '/'.str_replace('\\', '/', $class) . '.php';
+    require($classPath);
 }
 
 /* -----------------------demo------------------- */

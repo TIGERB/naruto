@@ -12,6 +12,7 @@
 namespace Naruto;
 
 use Naruto\Master;
+use Naruto\Daemon;
 use Naruto\Worker;
 use Naruto\ProcessException;
 use Closure;
@@ -28,6 +29,13 @@ class Manager
 	 * @var object Process
 	 */
 	private $master = '';
+
+	/**
+	 * daemon process object
+	 *
+	 * @var object Process
+	 */
+	private $daemon = '';
 
 	/**
 	 * worker process objects
@@ -120,6 +128,9 @@ class Manager
 		// init master instance
 		$this->master = new Master();
 
+		// init daemon instance
+		$this->daemon = new Daemon();
+
 		// register worker business logic
 		$this->workBusinessClosure = $closure;
 
@@ -158,12 +169,22 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.2.1
+Version: 0.3.0
 
 \033[0m
 WELCOME;
 		
 		echo $welcome;
+	}
+
+	/**
+	 * the _get magic function
+	 * 
+	 * @param string $name property name
+	 */
+	public function __get($name = '')
+	{
+		return $this->$name;
 	}
 
 	/**
@@ -322,11 +343,12 @@ WELCOME;
 	/**
 	 * execute fork worker operation
 	 *
+	 * @param int $num the number that the worker will be start
 	 * @return void
 	 */
-	private function execFork()
+	public function execFork($num = 0)
 	{
-		foreach (range(1, $this->startNum) as $v) {
+		foreach (range(1, $num? : $this->startNum) as $v) {
 			$this->fork();
 		}
 	}
@@ -339,6 +361,9 @@ WELCOME;
 		while (true) {
 			// dispatch signal for the handlers
 			pcntl_signal_dispatch();
+
+			// daemon process
+			$this->daemon->check($this);
 
 			// prevent the child process become a zombie process
 			// pcntl_wait($status);

@@ -8,7 +8,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.2.1
+Version: 0.3.0
 
 ```
 
@@ -58,5 +58,5 @@ naruto start/reload/quit/stop
 # TODO
 
 - [x] Implement a shell script to control the process
-- [ ] Implement a daemon for worker by the master
+- [x] Implement a daemon for worker by the master
 - [ ] Add more information for the log
