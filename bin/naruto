@@ -12,8 +12,18 @@
 #
 
 # Find the master process pid
-ppid=$(pstree | grep 'php naruto' | grep '\-+' | awk '{print $4}'
-)
+os=$(uname)
+
+if [[ "$os" == 'Linux' ]]
+then
+    ppid=$(pstree -aps | grep 'naruto' | grep 'php' | awk -F ',' '{if(NR==1){print $2}}' | awk '{print $1}')
+elif [[ "$os" == 'Darwin' ]]
+then
+    ppid=$(pstree | grep 'php naruto' | grep '\-+' | awk '{print $4}')
+else
+    echo -e "just support macos and linux os system"
+    exit
+fi
 
 case $1 in
 "start")
