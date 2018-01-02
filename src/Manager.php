@@ -100,9 +100,9 @@ class Manager
 	 */
 	private $signalSupport = [
 		'reload'    => 10, // reload signal
-		'stop'      => 12, // stop signal
-		'terminate' => 15, // terminate signal
-		// 'int'	 => 2 // interrupt signal
+		'stop'      => 12, // quit signal gracefully stop
+		'terminate' => 15, // terminate signal forcefully stop
+		'int'	 	=> 2 // interrupt signal
 	];
 
 	/**
@@ -138,7 +138,8 @@ class Manager
 		$this->signalSupport = [
 			'reload'    => SIGUSR1,
 			'stop'	    => SIGUSR2,
-			'terminate' => SIGTERM
+			'terminate' => SIGTERM,
+			'int'		=> SIGINT
 		];
 		
 		// exectue fork
@@ -246,20 +247,29 @@ WELCOME;
 				}
 			break;
 
-			// case $this->signalSupport['int']:
-			// 	// kill -9 all worker process
-			// 	foreach ($this->workers as $v) {
-			// 		posix_kill($v->pid, SIGTERM);
-			// 	}
-			// 	// kill -9 master process
-			// 	posix_kill($this->pid, SIGTERM);
-			// break;
-			
-			case $this->signalSupport['terminate']:
-				// kill -9 all worker process
+			case $this->signalSupport['int']:
 				foreach ($this->workers as $v) {
+					// clear pipe
+					$v->clearPipe();
+					// kill -9 all worker process
 					posix_kill($v->pid, SIGTERM);
 				}
+				// clear pipe
+				$this->master->clearPipe();
+				// kill -9 master process
+				echo "stop... \n";
+				exit;
+			break;
+			
+			case $this->signalSupport['terminate']:
+				foreach ($this->workers as $v) {
+					// clear pipe
+					$v->clearPipe();
+					// kill -9 all worker process
+					posix_kill($v->pid, SIGTERM);
+				}
+				// clear pipe
+				$this->master->clearPipe();
 				// kill -9 master process
 				echo "stop... \n";
 				exit;

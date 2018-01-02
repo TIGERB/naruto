@@ -256,7 +256,7 @@ abstract class Process
 	 *
 	 * @return void
 	 */
-	protected function clearPipe()
+	public function clearPipe()
 	{
 		$msg = [
 			'msg' => [
