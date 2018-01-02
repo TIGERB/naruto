@@ -38,7 +38,7 @@ case $1 in
         echo -e "Please use php 7+"
         exit
     fi
-    php naruto --worker-num="$2" --passwd="$3"
+    php "$NARUTO_PATH"/naruto --worker-num="$2" --passwd="$3"
     ;;
 "reload")
     if [[ "$ppid" == '' ]]

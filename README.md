@@ -39,6 +39,8 @@ $instance = new Manager([
 
 > export PATH="$PATH:\<yourpath\>/naruto/bin"
 
+> export NARUTO_PATH="\<yourpath\>/naruto"
+
 ```
 naruto start/reload/quit/stop
 ```
