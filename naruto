@@ -34,7 +34,7 @@ _ __   __ _ _ __ _   _| |_ ___
 
 An object-oriented multi process manager for PHP
 
-Version: 0.3.0
+Version: 0.3.1
     \n
 HELP;
 
@@ -60,6 +60,9 @@ foreach ($argv as $v) {
         }
     }
 }
+
+// require composer autoload file
+require(__DIR__ . '/vendor/autoload.php');
 
 // register autoload
 spl_autoload_register('autoload');
@@ -106,7 +109,8 @@ try {
 		], function (Process $worker) {
 			// mock business logic
 			$instance = new Test();
-			$instance->businessLogic();
+            $instance->businessLogic();
+            $instance->dbTest();
 		}
 	);
 } catch (Ex $e) {

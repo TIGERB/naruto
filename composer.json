@@ -11,7 +11,9 @@
             "email": "tigerbcode@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "catfan/Medoo": "^1.5"
+    },
     "autoload": {
         "psr-4": {
             "Naruto\\": "/src/",

@@ -170,7 +170,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.0
+Version: 0.3.1
 
 \033[0m
 WELCOME;

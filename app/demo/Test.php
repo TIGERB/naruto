@@ -12,6 +12,7 @@
 namespace App\Demo;
 
 use Naruto\ProcessException;
+use Medoo\Medoo;
 
 class Test
 {
@@ -26,5 +27,22 @@ class Test
         ]);
         // mock business logic
         usleep(1000000);
+    }
+
+    public function dbTest()
+    {
+        $db = new Medoo([
+            'database_type' => 'mysql',
+            'database_name' => 'naruto',
+            'server'        => 'localhost',
+            'username'      => 'naruto',
+            'password'      => 'naruto'
+        ]);
+
+        $db->insert('account', [
+            'username'  => 'test',
+            'email'     => 'test@test.com',
+            'password'  => 'test'
+        ]);
     }
 }
