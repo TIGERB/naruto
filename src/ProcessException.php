@@ -30,7 +30,7 @@ class ProcessException extends Exception
 	 *
 	 * @var string
 	 */
-	private static $logPath = '/tmp/naruto.process.manager.log';
+	private static $logPath = '/tmp/naruto';
 	
 	/**
 	 * the magic __callStatics function
@@ -47,7 +47,7 @@ class ProcessException extends Exception
 		}
 		self::$logPath = (isset($data['path'])? $data['path']: '')? : self::$logPath;
         $msg = self::decorate($method, $data['msg']);
-		error_log($msg, 3, self::$logPath);
+		error_log($msg, 3, self::$logPath . '.' . date('Y-m-d', time()) . '.log');
 		if ($method === 'error') {
 			exit;
 		}
