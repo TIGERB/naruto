@@ -65,11 +65,19 @@ class Worker extends Process
 			if ($this->workerExitFlag) {
 				$this->workerExit();
 			}
-			
+
+			// check max execute time
+			if (self::$currentExecuteTimes >= self::$maxExecuteTimes) {
+				$this->workerExit();
+			}
+
 			// handle pipe msg
 			if ($this->signal = $this->pipeRead()) {
 				$this->dispatchSig();
 			}
+
+			// increment 1
+			++self::$currentExecuteTimes;
 
 			// precent cpu usage rate reach 100%
 			usleep(self::$hangupLoopMicrotime);

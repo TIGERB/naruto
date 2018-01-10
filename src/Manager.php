@@ -119,6 +119,8 @@ class Manager
 	 */
 	public function __construct($config = [], Closure $closure)
 	{
+		date_default_timezone_set('Asia/Shanghai');
+
 		// welcome
 		$this->welcome();
 
@@ -170,7 +172,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.1
+Version: 0.3.2
 
 \033[0m
 WELCOME;
@@ -252,7 +254,14 @@ WELCOME;
 					// clear pipe
 					$v->clearPipe();
 					// kill -9 all worker process
-					posix_kill($v->pid, SIGTERM);
+					$result = posix_kill($v->pid, SIGKILL);
+					ProcessException::info([
+						'msg' => [
+							'from'   => $this->master->type,
+							'extra'  => "kill -SIGKILL {$v->pid}",
+							'result' => $result
+						]
+					]);
 				}
 				// clear pipe
 				$this->master->clearPipe();
@@ -266,7 +275,7 @@ WELCOME;
 					// clear pipe
 					$v->clearPipe();
 					// kill -9 all worker process
-					posix_kill($v->pid, SIGTERM);
+					posix_kill($v->pid, SIGKILL);
 				}
 				// clear pipe
 				$this->master->clearPipe();

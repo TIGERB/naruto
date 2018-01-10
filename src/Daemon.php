@@ -51,8 +51,8 @@ class Daemon extends Process
         }
 
         // get num now
-        $num = shell_exec("pstree -p {$manager->master->pid} | grep php | wc -l");
-
+		$num = shell_exec("pstree -p {$manager->master->pid} | grep php | wc -l") - 3;
+		
         // check num
         $diff = $manager->startNum - $num;
         if ($diff > 0) {

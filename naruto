@@ -34,7 +34,7 @@ _ __   __ _ _ __ _   _| |_ ___
 
 An object-oriented multi process manager for PHP
 
-Version: 0.3.1
+Version: 0.3.2
     \n
 HELP;
 
@@ -110,7 +110,7 @@ try {
 			// mock business logic
 			$instance = new Test();
             $instance->businessLogic();
-            $instance->dbTest();
+            // $instance->dbTest();
 		}
 	);
 } catch (Ex $e) {

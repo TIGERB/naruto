@@ -8,7 +8,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.1
+Version: 0.3.2
 
 ```
 
@@ -21,18 +21,42 @@ composer create-project tigerb/naruto naruto --prefer-dist
 ```
 
 ### Business code
+
 ```php
 use Naruto\Manager;
 use Naruto\Process;
+use Exception as Ex;
+use App\Demo\Test;
 
-$instance = new Manager([
-		'passwd' 	 => 'tigerb',
-		'worker_num' => 5,
+/**
+ * example
+ * 
+ * $config = [
+ * 		'passwd' => '123456', // unix user passwd
+ * 		'worker_num' => 5, // worker start number
+ * ]
+ * new Manager($config, $closure)
+ */
+try {
+	$instance = new Manager([
+		'passwd' 	 => isset($input['passwd'])? $input['passwd']: '',
+		'worker_num' => isset($input['worker-num'])? $input['worker-num']: 5,
 		], function (Process $worker) {
-      # your business logic here ...
-      
+			// mock business logic
+			$instance = new Test();
+            $instance->businessLogic();
+            $instance->dbTest();
 		}
 	);
+} catch (Ex $e) {
+	ProcessException::error([
+		'msg' => [
+			'msg'  => $e->getMessage(),
+			'file' => $e->getFile(),
+			'line' => $e->getLine(),
+		]
+	]);
+}
 ```
 
 ### Run
@@ -40,6 +64,8 @@ $instance = new Manager([
 > export PATH="$PATH:\<yourpath\>/naruto/bin"
 
 > export NARUTO_PATH="\<yourpath\>/naruto"
+
+> composer install
 
 ```
 naruto start/reload/quit/stop
@@ -63,5 +89,6 @@ naruto start/reload/quit/stop
 - [x] Implement a daemon for worker by the master
 - [x] Optimize log
 - [x] Use a lightweight Orm [Metoo](https://github.com/catfan/Medoo)
+- [x] Implement max execute times for the worker process
 - [ ] Add config file
 - [ ] Add config reload strategy

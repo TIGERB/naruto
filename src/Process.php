@@ -24,14 +24,14 @@ abstract class Process
 	 *
 	 * @var string
 	 */
-	protected $type = '';
+	public $type = '';
 
 	/**
 	 * process id
 	 *
 	 * @var int
 	 */
-	public	  $pid = '';
+	public $pid = '';
 
 	/**
 	 * pipe name
@@ -97,6 +97,24 @@ abstract class Process
 	 * @var int
 	 */
 	protected static $hangupLoopMicrotime = 200000;
+
+	/**
+	 * max execute times
+	 * 
+	 * default 5*60*60*24
+	 *
+	 * @var int
+	 */
+	protected static $maxExecuteTimes = 5*60*60*24;
+
+	/**
+	 * current execute times
+	 * 
+	 * default 0
+	 *
+	 * @var int
+	 */
+	protected static $currentExecuteTimes = 0;
 
 	/**
 	 * construct function
