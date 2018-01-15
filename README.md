@@ -91,4 +91,5 @@ naruto start/reload/quit/stop
 - [x] Use a lightweight Orm [Metoo](https://github.com/catfan/Medoo)
 - [x] Implement max execute times for the worker process
 - [ ] Add config file
+- [ ] Implement email send when the worker in a exception&error
 - [ ] Add config reload strategy
