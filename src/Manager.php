@@ -24,6 +24,15 @@ use Exception;
 class Manager
 {
 	/**
+	 * operation system
+	 * 
+	 * Linux/Darwin
+	 *
+	 * @var string
+	 */
+	private $os = '';
+
+	/**
 	 * master process object
 	 *
 	 * @var object Process
@@ -172,7 +181,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.2
+Version: 0.3.3
 
 \033[0m
 WELCOME;
@@ -198,20 +207,20 @@ WELCOME;
 	 */
 	public function configure($config = [])
 	{
+		// set os type
+		$this->os = $config['os']?? $this->os;
+
 		// set user password
-		$this->userPasswd = $config['passwd'];
+		$this->userPasswd = $config['passwd']?? '';
 		
 		// set worker start number
-		$this->startNum = isset($config['worker_num'])? 
-			$config['worker_num']: $this->startNum;
+		$this->startNum = $config['worker_num']?? $this->startNum;
 
 		// set hangup sleep time
-		self::$hangupLoopMicrotime = isset($config['hangup_loop_microtime'])? 
-			$config['hangup_loop_microtime']: self::$hangupLoopMicrotime;
+		self::$hangupLoopMicrotime = $config['hangup_loop_microtime']?? self::$hangupLoopMicrotime;
 
 		// set pipe dir
-		$this->pipeDir = isset($config['pipe_dir'])? 
-		$config['pipe_dir']: '';
+		$this->pipeDir = $config['pipe_dir']?? '';
 	}
 
 	/**

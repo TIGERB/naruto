@@ -50,14 +50,19 @@ class Daemon extends Process
             return;
         }
 
-        // get num now
-		$num = shell_exec("pstree -p {$manager->master->pid} | grep php | wc -l") - 3;
-		
-        // check num
-        $diff = $manager->startNum - $num;
+		// get num now
+		$num = intval(shell_exec("pstree -p {$manager->master->pid} | grep php | wc -l"));
+		if ($manager->os === 'Darwin') {
+			$num -= 3;
+			$num = $num < 0? 0: $num;
+		}
+
+		// check num
+		$diff = $manager->startNum - $num;
+		$diff = $diff < 0? 0: $diff;
         if ($diff > 0) {
             // start worker
-            $manager->execFork($diff);   
+            $manager->execFork($diff);
         }
 	}
 

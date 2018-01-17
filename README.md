@@ -8,9 +8,13 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.2
+Version: 0.3.3
 
 ```
+
+<p align="center">
+<a href="http://naruto.tigerb.cn/"><img src="https://img.shields.io/badge/os-Linux%26Darwin-blue.svg" alt="OS"></a>
+</p>
 
 # How to use?
 
@@ -33,19 +37,21 @@ use App\Demo\Test;
  * 
  * $config = [
  * 		'passwd' => '123456', // unix user passwd
- * 		'worker_num' => 5, // worker start number
+ * 		'worker_num' => 5, // worker start number,
+ * 		'os' => 'Linux' // os type
  * ]
  * new Manager($config, $closure)
  */
 try {
 	$instance = new Manager([
-		'passwd' 	 => isset($input['passwd'])? $input['passwd']: '',
-		'worker_num' => isset($input['worker-num'])? $input['worker-num']: 5,
+		'os'         => $input['os']?? 'Linux',
+		'passwd' 	 => $input['passwd']?? '',
+		'worker_num' => $input['worker-num']?? 5,
 		], function (Process $worker) {
 			// mock business logic
 			$instance = new Test();
-            $instance->businessLogic();
-            $instance->dbTest();
+			$instance->businessLogic();
+			$instance->dbTest();
 		}
 	);
 } catch (Ex $e) {

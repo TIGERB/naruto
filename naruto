@@ -34,7 +34,7 @@ _ __   __ _ _ __ _   _| |_ ___
 
 An object-oriented multi process manager for PHP
 
-Version: 0.3.2
+Version: 0.3.3
     \n
 HELP;
 
@@ -102,8 +102,9 @@ use App\Demo\Test;
  */
 try {
 	$instance = new Manager([
-		'passwd' 	 => isset($input['passwd'])? $input['passwd']: '',
-		'worker_num' => isset($input['worker-num'])? $input['worker-num']: 5,
+        'os'         => $input['os']?? 'Linux',
+		'passwd' 	 => $input['passwd']?? '',
+		'worker_num' => $input['worker-num']?? 5,
 		// 'pipe_dir'   => '/tmp/naruto/'
 		// 'hangup_loop_microtime' => 200000
 		], function (Process $worker) {

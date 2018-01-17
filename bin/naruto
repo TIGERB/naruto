@@ -8,7 +8,7 @@
 #
 #An object-oriented multi process manager for PHP
 #
-#Version: 0.3.2
+#Version: 0.3.3
 #
 
 # Find the master process pid
@@ -38,7 +38,7 @@ case $1 in
         echo -e "Please use php 7+"
         exit
     fi
-    php "$NARUTO_PATH"/naruto --worker-num="$2" --passwd="$3"
+    php "$NARUTO_PATH"/naruto --worker-num="$2" --passwd="$3" --os="$os"
     ;;
 "reload")
     if [[ "$ppid" == '' ]]
@@ -96,6 +96,6 @@ cat <<EOF
         ...    
 EOF
 echo -e "\n \033[36m An object-oriented multi process manager for PHP\033[0m \n"
-echo -e "  \033[36mVersion: 0.3.2 \033[0m \n"
+echo -e "  \033[36mVersion: 0.3.3 \033[0m \n"
     exit
 esac
