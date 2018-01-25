@@ -8,13 +8,16 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.3
+Version: 0.3.5
 
 ```
 
 <p align="center">
 <a href="http://naruto.tigerb.cn/"><img src="https://img.shields.io/badge/os-Linux%26Darwin-blue.svg" alt="OS"></a>
 </p>
+
+
+<p align="center"><img width="30%" src="http://cdn.tigerb.cn/wechat-blog-qrcode.jpg"><p>
 
 # How to use?
 
@@ -29,6 +32,7 @@ composer create-project tigerb/naruto naruto --prefer-dist
 ```php
 use Naruto\Manager;
 use Naruto\Process;
+use Naruto\ProcessException;
 use Exception as Ex;
 use App\Demo\Test;
 
@@ -96,6 +100,6 @@ naruto start/reload/quit/stop
 - [x] Optimize log
 - [x] Use a lightweight Orm [Metoo](https://github.com/catfan/Medoo)
 - [x] Implement max execute times for the worker process
-- [ ] Add config file
+- [x] Add config file
 - [ ] Implement email send when the worker in a exception&error
 - [ ] Add config reload strategy

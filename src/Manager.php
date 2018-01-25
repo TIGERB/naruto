@@ -103,6 +103,13 @@ class Manager
 	private $pipeDir = '';
 
 	/**
+	 * env config
+	 *
+	 * @var array
+	 */
+	private $env = [];
+
+	/**
 	 * support linux signals
 	 *
 	 * @var array
@@ -128,7 +135,11 @@ class Manager
 	 */
 	public function __construct($config = [], Closure $closure)
 	{
-		date_default_timezone_set('Asia/Shanghai');
+		// load env
+		$this->loadEnv();
+
+		// set timezone
+		date_default_timezone_set($this->env['config']['timezone']?? 'Asia/Shanghai');
 
 		// welcome
 		$this->welcome();
@@ -181,12 +192,20 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.3
+Version: 0.3.5
 
 \033[0m
 WELCOME;
 		
 		echo $welcome;
+	}
+
+	/**
+	 * load env
+	 */
+	private function loadEnv()
+	{
+		$this->env = parse_ini_file(__DIR__ . '/../.env', true);
 	}
 
 	/**

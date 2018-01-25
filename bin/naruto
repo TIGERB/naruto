@@ -8,7 +8,7 @@
 #
 #An object-oriented multi process manager for PHP
 #
-#Version: 0.3.3
+#Version: 0.3.5
 #
 
 # Find the master process pid
@@ -96,6 +96,6 @@ cat <<EOF
         ...    
 EOF
 echo -e "\n \033[36m An object-oriented multi process manager for PHP\033[0m \n"
-echo -e "  \033[36mVersion: 0.3.3 \033[0m \n"
+echo -e "  \033[36mVersion: 0.3.5 \033[0m \n"
     exit
 esac
