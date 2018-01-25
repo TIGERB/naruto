@@ -8,7 +8,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.3
+Version: 0.3.5
 
 ```
 
@@ -96,6 +96,6 @@ naruto start/reload/quit/stop
 - [x] Optimize log
 - [x] Use a lightweight Orm [Metoo](https://github.com/catfan/Medoo)
 - [x] Implement max execute times for the worker process
-- [ ] Add config file
+- [x] Add config file
 - [ ] Implement email send when the worker in a exception&error
 - [ ] Add config reload strategy

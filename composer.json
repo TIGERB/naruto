@@ -19,5 +19,10 @@
             "Naruto\\": "/src/",
             "App\\": "/app/"
         }
+    },
+    "scripts": {
+        "post-root-project-cmd": [
+            "cp .env.example .env"
+        ]
     }
 }
