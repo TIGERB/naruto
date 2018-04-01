@@ -233,7 +233,7 @@ WELCOME;
 		$this->userPasswd = $config['passwd']?? '';
 		
 		// set worker start number
-		$this->startNum = $config['worker_num']?? $this->startNum;
+		$this->startNum = (int)$config['worker_num']?? $this->startNum;
 
 		// set hangup sleep time
 		self::$hangupLoopMicrotime = $config['hangup_loop_microtime']?? self::$hangupLoopMicrotime;
