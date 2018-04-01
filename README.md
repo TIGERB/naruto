@@ -21,7 +21,7 @@ Version: 0.3.5
 ### Install
 
 ```
-composer create-project tigerb/naruto naruto --prefer-dist
+composer create-project tigerb/naruto naruto --prefer-dist && cd naruto
 ```
 
 ### Business code
@@ -67,9 +67,7 @@ try {
 
 ### Run
 
-> export PATH="$PATH:\<yourpath\>/naruto/bin"
-
-> export NARUTO_PATH="\<yourpath\>/naruto"
+> export NARUTO_PATH=$(pwd) && export PATH="$PATH:$NARUTO_PATH/bin"
 
 > composer install
 

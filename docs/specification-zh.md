@@ -8,8 +8,6 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.1.0
-
 ```
 
 # 业务场景
