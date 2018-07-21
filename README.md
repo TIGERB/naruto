@@ -16,6 +16,11 @@ Version: 0.3.5
 <a href="http://naruto.tigerb.cn/"><img src="https://img.shields.io/badge/os-Linux%26Darwin-blue.svg" alt="OS"></a>
 </p>
 
+<p align="center">
+<a href="http://naruto.tigerb.cn/"><img src="http://cdn.tigerb.cn/ezgif.com-video-to-gif.gif" alt="demo"></a>
+</p>
+
+
 # How to use?
 
 ### Install
@@ -42,27 +47,13 @@ use App\Demo\Test;
  * ]
  * new Manager($config, $closure)
  */
-try {
-	$instance = new Manager([
-		'os'         => $input['os']?? 'Linux',
-		'passwd' 	 => $input['passwd']?? '',
-		'worker_num' => $input['worker-num']?? 5,
-		], function (Process $worker) {
+$instance = new Manager([], function (Process $worker) {
 			// mock business logic
 			$instance = new Test();
 			$instance->businessLogic();
 			$instance->dbTest();
 		}
 	);
-} catch (Ex $e) {
-	ProcessException::error([
-		'msg' => [
-			'msg'  => $e->getMessage(),
-			'file' => $e->getFile(),
-			'line' => $e->getLine(),
-		]
-	]);
-}
 ```
 
 ### Run
