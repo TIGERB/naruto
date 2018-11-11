@@ -34,7 +34,7 @@ An object-oriented multi process manager for PHP
 
 ### 多进程
 
-PHP fork进程的方法 `pcntl_fork`, 这个大家应该有所了解，如果不知道的简单google/bing一下应该很容易找到这个函数。接着FTM, 我们看看`pcntl_fork`这个函数的使用方式大致如下：
+PHP fork进程的方法 `pcntl_fork`, 这个大家应该有所了解，如果不知道的简单google/bing一下应该很容易找到这个函数。接着FTM, 我们看看`pcntl_fork`这个函数的使用方式大致如下：
 
 ```php
 $pid = pcntl_fork(); // pcntl_fork 的返回值是一个int值
@@ -67,7 +67,7 @@ switch ($pid) {
 
 我们看到master有调用`pcntl_wait`或者`pcntl_waitpid`函数，为什么呢？首先我们在这里得提到两个概念，如下：
 
-- 孤儿进程：父进程挂了，子进程被pid=1的init进程接管(wait/waitpid)，直到子进程自身生命周期结束被系统回收资源和父进程采取相关的回收操作
+- 孤儿进程：父进程挂了，子进程被pid=1的init进程接管(wait/waitpid)，直到子进程自身生命周期结束被系统回收资源和父进程采取相关的回收操作
 - 僵尸进程：子进程exit退出,父进程没有通过wait/waitpid获取子进程状态，子进程占用的进程号等描述资源符还存在，产生危害：例如进程号是有限的，无法释放进程号导致未来可能无进程号可用
 
 所以，`pcntl_wait`或者`pcntl_waitpid`的目的就是防止worker成为僵尸进程(zombie process)。
@@ -83,7 +83,7 @@ switch ($pid) {
 上面实现了多进程和多进程的常驻内存，那master如何去管理worker呢？答案：多进程通信。话不多说google/bing一下，以下我列举几种方式：
 
 - 命名管道: 感兴趣
-- 队列: 个人感觉和业务中使用redis做消息队列思路应该一致
+- 队列: 个人感觉和业务中使用redis做消息队列思路应该一致
 - 共享内存: 违背“不要通过共享内存来通信，要通过通信来实现共享”原则
 - 信号: 承载信息量少
 - 套接字: 不熟悉
