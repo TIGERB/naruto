@@ -17,14 +17,20 @@ Version: 0.3.5
 </p>
 
 
-<p align="center"><img width="30%" src="http://cdn.tigerb.cn/wechat-blog-qrcode.jpg"><p>
+<p align="center">
+	<a href="http://naruto.tigerb.cn/"><img width="30%" src="http://cdn.tigerb.cn/wechat-blog-qrcode.jpg"></a>
+<p>
+<p align="center">
+	<a href="http://naruto.tigerb.cn/"><img src="http://cdn.tigerb.cn/ezgif.com-video-to-gif.gif" alt="demo"></a>
+</p>
+
 
 # How to use?
 
 ### Install
 
 ```
-composer create-project tigerb/naruto naruto --prefer-dist
+composer create-project tigerb/naruto naruto --prefer-dist && cd naruto
 ```
 
 ### Business code
@@ -46,34 +52,18 @@ use App\Demo\Test;
  * ]
  * new Manager($config, $closure)
  */
-try {
-	$instance = new Manager([
-		'os'         => $input['os']?? 'Linux',
-		'passwd' 	 => $input['passwd']?? '',
-		'worker_num' => $input['worker-num']?? 5,
-		], function (Process $worker) {
+$instance = new Manager([], function (Process $worker) {
 			// mock business logic
 			$instance = new Test();
 			$instance->businessLogic();
 			$instance->dbTest();
 		}
 	);
-} catch (Ex $e) {
-	ProcessException::error([
-		'msg' => [
-			'msg'  => $e->getMessage(),
-			'file' => $e->getFile(),
-			'line' => $e->getLine(),
-		]
-	]);
-}
 ```
 
 ### Run
 
-> export PATH="$PATH:\<yourpath\>/naruto/bin"
-
-> export NARUTO_PATH="\<yourpath\>/naruto"
+> export NARUTO_PATH=$(pwd) && export PATH="$PATH:$NARUTO_PATH/bin"
 
 > composer install
 
