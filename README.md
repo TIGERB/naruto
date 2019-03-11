@@ -19,7 +19,7 @@ Version: 0.3.5
 
 <p align="center">
 	<a href="http://naruto.tigerb.cn/"><img width="30%" src="http://cdn.tigerb.cn/wechat-blog-qrcode.jpg"></a>
-<p>
+</p>
 <p align="center">
 	<a href="http://naruto.tigerb.cn/"><img src="http://cdn.tigerb.cn/ezgif.com-video-to-gif.gif" alt="demo"></a>
 </p>
