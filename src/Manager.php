@@ -192,7 +192,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.5
+Version: 0.5.0
 
 \033[0m
 WELCOME;
@@ -205,7 +205,17 @@ WELCOME;
 	 */
 	private function loadEnv()
 	{
-		$this->env = parse_ini_file(__DIR__ . '/../.env', true);
+		$envPath = __DIR__ . '/../';
+		if (!file_exists($envPath . '.env')) {
+			copy($envPath . '.env.example', $envPath . '.env');
+		}
+		if (!$this->env = parse_ini_file($envPath . '.env', true)) {
+			ProcessException::error([
+				'msg' => [
+					'msg'  => 'Parse ini file fail',
+				]
+			]);
+		}
 	}
 
 	/**
