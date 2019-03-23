@@ -8,7 +8,7 @@ _ __   __ _ _ __ _   _| |_ ___
 			
 An object-oriented multi process manager for PHP
 
-Version: 0.3.5
+Version: 0.5.0
 
 ```
 
@@ -36,34 +36,17 @@ composer create-project tigerb/naruto naruto --prefer-dist && cd naruto
 ### Business code
 
 ```php
-use Naruto\Manager;
-use Naruto\Process;
-use Naruto\ProcessException;
-use Exception as Ex;
-use App\Demo\Test;
 
-/**
- * example
- * 
- * $config = [
- * 		'passwd' => '123456', // unix user passwd
- * 		'worker_num' => 5, // worker start number,
- * 		'os' => 'Linux' // os type
- * ]
- * new Manager($config, $closure)
- */
-$instance = new Manager([], function (Process $worker) {
+new Manager([], function (Process $worker) {
 			// mock business logic
-			$instance = new Test();
-			$instance->businessLogic();
-			$instance->dbTest();
+			(new Test())->businessLogic();
 		}
 	);
 ```
 
 ### Run
 
-> export NARUTO_PATH=$(pwd) && export PATH="$PATH:$NARUTO_PATH/bin"
+> echo export NARUTO_PATH=$(pwd) >> ~/.profile && echo 'export PATH="$PATH:$NARUTO_PATH/bin"' >> ~/.profile && source ~/.profile
 
 > composer install
 
@@ -91,5 +74,6 @@ naruto start/reload/quit/stop
 - [x] Use a lightweight Orm [Metoo](https://github.com/catfan/Medoo)
 - [x] Implement max execute times for the worker process
 - [x] Add config file
+- [x] Remove a lightweight Orm [Metoo](https://github.com/catfan/Medoo) for keep lightweight @2019/03/23
 - [ ] Implement email send when the worker in a exception&error
 - [ ] Add config reload strategy

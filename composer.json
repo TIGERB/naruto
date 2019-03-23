@@ -12,7 +12,6 @@
         }
     ],
     "require": {
-        "catfan/Medoo": "^1.5"
     },
     "autoload": {
         "psr-4": {

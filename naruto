@@ -34,7 +34,7 @@ _ __   __ _ _ __ _   _| |_ ___
 
 An object-oriented multi process manager for PHP
 
-Version: 0.3.5
+Version: 0.5.0
     \n
 HELP;
 
@@ -101,7 +101,7 @@ use App\Demo\Test;
  * new Manager($config, $closure)
  */
 try {
-	$instance = new Manager([
+	new Manager([
         'os'         => $input['os']?? 'Linux',
 		'passwd' 	 => $input['passwd']?? '',
 		'worker_num' => $input['worker-num']?? 5,
@@ -109,9 +109,7 @@ try {
 		// 'hangup_loop_microtime' => 200000
 		], function (Process $worker) {
 			// mock business logic
-			$instance = new Test();
-            $instance->businessLogic();
-            // $instance->dbTest();
+            (new Test())->businessLogic();
 		}
 	);
 } catch (Ex $e) {
