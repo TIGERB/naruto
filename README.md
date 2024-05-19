@@ -20,9 +20,6 @@ Version: 0.5.0
 <p align="center">
 	<a href="http://naruto.tigerb.cn/"><img width="30%" src="http://cdn.tigerb.cn/wechat-blog-qrcode.jpg?imageMogr2/thumbnail/260x260!/format/webp/blur/1x0/quality/90|imageslim"></a>
 </p>
-<p align="center">
-	<a href="http://naruto.tigerb.cn/"><img src="http://cdn.tigerb.cn/ezgif.com-video-to-gif.gif" alt="demo"></a>
-</p>
 
 
 # How to use?
